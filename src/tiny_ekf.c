@@ -9,6 +9,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>  // get memset
 
 /* Cholesky-decomposition matrix-inversion code, adapated from
    http://jean-pierre.moreau.pagesperso-orange.fr/Cplus/choles_cpp.txt */
@@ -94,6 +95,9 @@ static void zeros(double * a, int m, int n)
     int j;
     for (j=0; j<m*n; ++j)
         a[j] = 0;
+//     memset(a, 0, sizeof(a)); // for automatically-allocated arrays
+    // memset(myarray, 0, N*sizeof(*myarray)); // for heap-allocated arrays, where N is the number of elements
+   
 }
 
 #ifdef DEBUG
@@ -145,7 +149,7 @@ static void transpose(double * a, double * at, int m, int n)
         }
 }
 
-/* A <- A + B */
+/* Matrix: A <- A + B */
 static void accum(double * a, double * b, int m, int n)
 {        
     int i,j;
@@ -153,9 +157,13 @@ static void accum(double * a, double * b, int m, int n)
     for(i=0; i<m; ++i)
         for(j=0; j<n; ++j)
             a[i*n+j] += b[i*n+j];
+//     in i;
+//     for (i=0; i<m*n; ++i){
+//         a[i] += b[i];
+//     }
 }
 
-/* C <- A + B */
+/* Vector: C <- A + B */
 static void add(double * a, double * b, double * c, int n)
 {
     int j;
@@ -165,7 +173,7 @@ static void add(double * a, double * b, double * c, int n)
 }
 
 
-/* C <- A - B */
+/* Vector: C <- A - B */
 static void sub(double * a, double * b, double * c, int n)
 {
     int j;
@@ -181,6 +189,10 @@ static void negate(double * a, int m, int n)
     for(i=0; i<m; ++i)
         for(j=0; j<n; ++j)
             a[i*n+j] = -a[i*n+j];
+//     in i;
+//     for (i=0; i<m*n; ++i){
+//         a[i] += -a[i];
+//     }
 }
 
 static void mat_addeye(double * a, int n)
