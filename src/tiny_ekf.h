@@ -6,6 +6,11 @@
  * MIT License
  */
 
+/*
+This library uses statically allocated arrays or heap allocated arrays because
+the array size is defined at compile time. Thus there is no use of malloc and 
+dynamically created arrays.
+*/
 
 /**
   * Initializes an EKF structure.
