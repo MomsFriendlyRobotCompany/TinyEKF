@@ -10,6 +10,21 @@
 This library uses statically allocated arrays or heap allocated arrays because
 the array size is defined at compile time. Thus there is no use of malloc and 
 dynamically created arrays.
+
+TODO: since this uses array of arrays, it unnecessarily complicates things. should
+be able to increase performance by changing to just an array.
+
+from [[1,2,3],[4,5,6] ...]
+to [1,2,3,4,5,6 ...] and use pointer arithmatic to access elements
+
+now can use:
+
+* memset(myarray, 0, N*sizeof(*myarray)); to clear arrays
+* a[i] += b[i]; iterate over single array for + and - operations
+
+However, my way may end up being a wash too, need to investigate
+
+Need to remove C++ stuff in TinyEKF header ... just want C for now
 */
 
 /**
