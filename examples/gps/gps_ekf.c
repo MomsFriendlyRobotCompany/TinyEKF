@@ -1,18 +1,18 @@
 /* gps_ekf: TinyEKF test case using You Chong's GPS example:
- * 
+ *
  *   http://www.mathworks.com/matlabcentral/fileexchange/31487-extended-kalman-filter-ekf--for-gps
- * 
+ *
  * Reads file gps.csv of satellite data and writes file ekf.csv of mean-subtracted estimated positions.
  *
  *
  * References:
  *
- * 1. R G Brown, P Y C Hwang, "Introduction to random signals and applied 
+ * 1. R G Brown, P Y C Hwang, "Introduction to random signals and applied
  * Kalman filtering : with MATLAB exercises and solutions",1996
  *
- * 2. Pratap Misra, Per Enge, "Global Positioning System Signals, 
+ * 2. Pratap Misra, Per Enge, "Global Positioning System Signals,
  * Measurements, and Performance(Second Edition)",2006
- * 
+ *
  * Copyright (C) 2015 Simon D. Levy
  *
  * MIT License
@@ -34,7 +34,7 @@ static void blkfill(ekf_t * ekf, const double * a, int off)
 {
     off *= 2;
 
-    ekf->Q[off]   [off]   = a[0]; 
+    ekf->Q[off]   [off]   = a[0];
     ekf->Q[off]   [off+1] = a[1];
     ekf->Q[off+1] [off]   = a[2];
     ekf->Q[off+1] [off+1] = a[3];
@@ -85,7 +85,7 @@ static void init(ekf_t * ekf)
 }
 
 static void model(ekf_t * ekf, double SV[4][3])
-{ 
+{
 
     int i, j;
 
@@ -113,10 +113,10 @@ static void model(ekf_t * ekf, double SV[4][3])
     }
 
     for (i=0; i<4; ++i) {
-        for (j=0; j<3; ++j) 
+        for (j=0; j<3; ++j)
             ekf->H[i][j*2]  = dx[i][j] / ekf->hx[i];
         ekf->H[i][6] = 1;
-    }   
+    }
 }
 
 static void readline(char * line, FILE * fp)
@@ -159,7 +159,7 @@ void error(const char * msg)
 }
 
 int main(int argc, char ** argv)
-{    
+{
     // Do generic EKF initialization
     ekf_t ekf;
     ekf_init(&ekf, Nsta, Mobs);
@@ -168,7 +168,7 @@ int main(int argc, char ** argv)
     init(&ekf);
 
     // Open input data file
-    FILE * ifp = fopen("gps.csv", "r");
+    FILE * ifp = fopen("../examples/gps/gps.csv", "r");
 
     // Skip CSV header
     skipline(ifp);
@@ -201,7 +201,7 @@ int main(int argc, char ** argv)
 
     // Compute means of filtered positions
     double mean_Pos_KF[3] = {0, 0, 0};
-    for (j=0; j<25; ++j) 
+    for (j=0; j<25; ++j)
         for (k=0; k<3; ++k)
             mean_Pos_KF[k] += Pos_KF[j][k];
     for (k=0; k<3; ++k)
@@ -210,11 +210,17 @@ int main(int argc, char ** argv)
 
     // Dump filtered positions minus their means
     for (j=0; j<25; ++j) {
-        fprintf(ofp, "%f,%f,%f\n", 
-                Pos_KF[j][0]-mean_Pos_KF[0], Pos_KF[j][1]-mean_Pos_KF[1], Pos_KF[j][2]-mean_Pos_KF[2]);
-        printf("%f %f %f\n", Pos_KF[j][0], Pos_KF[j][1], Pos_KF[j][2]);
+        printf("Err: %f,%f,%f\n",
+                Pos_KF[j][0]-mean_Pos_KF[0],
+                Pos_KF[j][1]-mean_Pos_KF[1],
+                Pos_KF[j][2]-mean_Pos_KF[2]);
+        fprintf(ofp, "%f,%f,%f\n",
+                Pos_KF[j][0]-mean_Pos_KF[0],
+                Pos_KF[j][1]-mean_Pos_KF[1],
+                Pos_KF[j][2]-mean_Pos_KF[2]);
+        // printf("%f %f %f\n", Pos_KF[j][0], Pos_KF[j][1], Pos_KF[j][2]);
     }
-    
+
     // Done!
     fclose(ifp);
     fclose(ofp);
