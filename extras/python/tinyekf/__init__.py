@@ -56,7 +56,7 @@ class EKF(object):
         h, H = self.h(self.x)
 
         # $G_k = P_k H^T_k (H_k P_k H^T_k + R)^{-1}$
-        G = np.dot(self.P_pre * H.T, np.linalg.inv(H * self.P_pre * H.T + self.R))
+        G = np.dot(self.P_pre.dot(H.T), np.linalg.inv(H.dot(self.P_pre).dot(H.T) + self.R))
 
         # $\hat{x}_k = \hat{x_k} + G_k(z_k - h(\hat{x}_k))$
         self.x += np.dot(G, (np.array(z) - h.T).T)
@@ -74,7 +74,7 @@ class EKF(object):
         Your state-transition fucntion should return a NumPy array of n elements representing the
         new state, and a nXn NumPy array of elements representing the the Jacobian of the function
         with respect to the new state.  Typically this is just the identity
-        function np.copy(x), so the Jacobianis just np.eye(len(x)).  '''
+        function np.copy(x), so the Jacobian is just np.eye(len(x)).  '''
         raise NotImplementedError()    
 
     @abstractmethod
